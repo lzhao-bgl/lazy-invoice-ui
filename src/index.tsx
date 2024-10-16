@@ -1,4 +1,4 @@
-import { Amplify } from 'aws-amplify'
+import {Amplify} from 'aws-amplify'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -18,7 +18,7 @@ if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <App />
+      <App/>
     </React.StrictMode>
   )
 }
