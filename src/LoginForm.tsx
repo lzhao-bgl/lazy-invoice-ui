@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
+import {Link} from 'react-router-dom';
 
 // Define the interface for form data
 interface LoginForm {
@@ -8,14 +9,14 @@ interface LoginForm {
 
 // LoginPage component
 const LoginPage: React.FC = () => {
-  const [formData, setFormData] = useState<LoginForm>({ email: '', password: '' });
+  const [formData, setFormData] = useState<LoginForm>({email: '', password: ''});
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const {name, value} = e.target;
+    setFormData({...formData, [name]: value});
   };
 
   // Password validation function
@@ -57,10 +58,10 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+      <form onSubmit={handleSubmit} style={{maxWidth: '400px', width: '100%'}}>
         <h2>Login</h2>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{marginBottom: '1rem'}}>
           <label htmlFor="email">Email:</label>
           <input
             type="email"
@@ -69,10 +70,10 @@ const LoginPage: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }}
+            style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem'}}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{marginBottom: '1rem'}}>
           <label htmlFor="password">Password:</label>
           <input
             type="password"
@@ -81,15 +82,15 @@ const LoginPage: React.FC = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }}
+            style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem'}}
           />
-          {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+          {passwordError && <p style={{color: 'red'}}>{passwordError}</p>}
         </div>
-        <button type="submit" disabled={isSubmitting} style={{ width: '100%', padding: '0.5rem' }}>
+        <button type="submit" disabled={isSubmitting} style={{width: '100%', padding: '0.5rem'}}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-          <a href="/forgot-password">Forgot Password?</a>
+        <div style={{marginTop: '1rem', textAlign: 'center'}}>
+          <Link to="/forgot-password">Forgot Password?</Link>
         </div>
       </form>
     </div>
