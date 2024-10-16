@@ -7,8 +7,8 @@ import App from './App'
 Amplify.configure({
   aws_cognito_region: 'ap-southeast-2',
   aws_user_pools: 'enable',
-  aws_user_pools_id: 'ap-southeast-2_gdH7jHbx3',
-  aws_user_pools_web_client_id: '9h0qc3pj4r756kj658utjd54p',
+  aws_user_pools_id: 'ap-southeast-2_DFLhRbcY9',
+  aws_user_pools_web_client_id: '2tff0ge1jqfkbmk1quean5ndp0',
   authenticationFlowType: 'USER_SRP_AUTH'
 })
 
