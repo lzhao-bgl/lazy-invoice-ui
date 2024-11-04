@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - uat
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+      - name: Install dependencies and build
+        run: |
+          yarn install
+          yarn build
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+      - name: Sync build files to S3 bucket
+        run: |
+          aws s3 sync build/ s3://${{ vars.S3_BUCKET_UAT }}/${{ github.run_number }}/
+      - name: Create robots.txt file
+        run: |
+          echo "User-agent: *" > robots.txt
+          echo "Disallow: /" >> robots.txt
+          aws s3 cp robots.txt s3://${{ vars.S3_BUCKET_UAT }}/${{ github.run_number }}/
+      - name: Add Cache-Control header to index.html
+        run: |
+          aws s3 cp s3://${{ vars.S3_BUCKET_UAT }}/${{ github.run_number }}/index.html s3://${{ vars.S3_BUCKET_UAT }}/${{ github.run_number }}/index.html --metadata-directive REPLACE --cache-control no-store --content-type text/html
+      - name: Update CloudFront Origin
+        run: |
+          NEW_CONFIG=$(aws cloudfront get-distribution-config --id '${{ vars.DISTRIBUTION_ID_UAT }}' | sed -E 's@OriginPath": ".*"@OriginPath": "/${{ github.run_number }}"@g' | sed -E 's@"ETag.*@@g')
+          ETAG=$(aws cloudfront get-distribution-config --id '${{ vars.DISTRIBUTION_ID_UAT }}' --query 'ETag' --output text)
+          aws cloudfront update-distribution --id '${{ vars.DISTRIBUTION_ID_UAT }}' --if-match "$ETAG" --cli-input-json "$NEW_CONFIG"
+          aws cloudfront create-invalidation --distribution-id '${{ vars.DISTRIBUTION_ID_UAT }}' --paths "/*"
